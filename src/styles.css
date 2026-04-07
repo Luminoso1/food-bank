@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+}
+
+:root[data-theme='dark'] {
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}

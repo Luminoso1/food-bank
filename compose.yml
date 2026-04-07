@@ -1,0 +1,16 @@
+services:
+  db:
+    image: docker.io/postgres:16-alpine
+    container_name: food-bank-db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: food-bank-db
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+
+volumes:
+  postgres:
