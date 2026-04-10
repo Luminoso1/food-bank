@@ -5,5 +5,9 @@ export const Route = createFileRoute('/_protected/dashboard')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/_protected/dashboard"!</div>
+  return (
+    <div>
+      <h1 className="font-semibold text-lg mb-4">hello /dashboard</h1>
+    </div>
+  )
 }

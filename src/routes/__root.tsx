@@ -73,7 +73,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body>
+      <body className="bg-white dark:bg-black transition-colors">
         {children}
         <TanStackDevtools
           config={{

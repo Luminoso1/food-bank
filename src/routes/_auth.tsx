@@ -1,4 +1,5 @@
-import { createFileRoute, redirect, Link, Outlet } from '@tanstack/react-router'
+import { createFileRoute, redirect, Outlet, Link } from '@tanstack/react-router'
+import { Image, Blocks } from 'lucide-react'
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: ({ context }) => {
@@ -11,14 +12,26 @@ export const Route = createFileRoute('/_auth')({
 
 function RouteComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/50 px-4">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <Link to="/" className="text-2xl font-bold text-primary">
-            Foodbank
+    <div className="w-full grid md:grid-cols-12 min-h-screen">
+      <div className="md:col-span-6 w-full px-6 flex flex-col">
+        <header className="py-6">
+          <Link to="/" className="font-semibold flex items-end gap-2">
+            <Blocks />
+            Food Bank
           </Link>
+        </header>
+
+        <div className="grow flex items-center justify-center">
+          <div className="mb-20 max-w-lg mx-auto w-full md:px-6">
+            <Outlet />
+          </div>
         </div>
-        <Outlet />
+      </div>
+
+      <div className="col-span-6 max-md:hidden bg-neutral-800/50 grid place-content-center">
+        <div className="p-8 bg-white/10 inline-block">
+          <Image className="brightness-50" size={32} />
+        </div>
       </div>
     </div>
   )

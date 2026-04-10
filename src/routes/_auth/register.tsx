@@ -35,7 +35,7 @@ function RouteComponent() {
     }
   }
   return (
-    <div className="max-w-md mx-auto px-6 py-10 bg-white dark:bg-black transition-colors">
+    <div>
       <h2 className="mb-10 text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
         Create Account
       </h2>

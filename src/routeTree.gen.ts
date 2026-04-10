@@ -13,6 +13,7 @@ import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
+import { Route as ProtectedConfigRouteImport } from './routes/_protected/config'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -35,6 +36,11 @@ const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => ProtectedRoute,
 } as any)
+const ProtectedConfigRoute = ProtectedConfigRouteImport.update({
+  id: '/config',
+  path: '/config',
+  getParentRoute: () => ProtectedRoute,
+} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -55,6 +61,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/config': typeof ProtectedConfigRoute
   '/dashboard': typeof ProtectedDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/config': typeof ProtectedConfigRoute
   '/dashboard': typeof ProtectedDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -72,14 +80,21 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
+  '/_protected/config': typeof ProtectedConfigRoute
   '/_protected/dashboard': typeof ProtectedDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/dashboard' | '/api/auth/$'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/config'
+    | '/dashboard'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/dashboard' | '/api/auth/$'
+  to: '/' | '/login' | '/register' | '/config' | '/dashboard' | '/api/auth/$'
   id:
     | '__root__'
     | '/'
@@ -87,6 +102,7 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/_auth/login'
     | '/_auth/register'
+    | '/_protected/config'
     | '/_protected/dashboard'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
@@ -128,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedDashboardRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_protected/config': {
+      id: '/_protected/config'
+      path: '/config'
+      fullPath: '/config'
+      preLoaderRoute: typeof ProtectedConfigRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
     '/_auth/register': {
       id: '/_auth/register'
       path: '/register'
@@ -165,10 +188,12 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface ProtectedRouteChildren {
+  ProtectedConfigRoute: typeof ProtectedConfigRoute
   ProtectedDashboardRoute: typeof ProtectedDashboardRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedConfigRoute: ProtectedConfigRoute,
   ProtectedDashboardRoute: ProtectedDashboardRoute,
 }
 
