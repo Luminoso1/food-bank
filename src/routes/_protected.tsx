@@ -1,5 +1,12 @@
-import { createFileRoute, redirect, Outlet, Link } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  redirect,
+  useRouter,
+  Outlet,
+  Link,
+} from '@tanstack/react-router'
 import { signOut } from '#/lib/auth/authClient'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/_protected')({
   beforeLoad: async ({ context }) => {
@@ -11,12 +18,14 @@ export const Route = createFileRoute('/_protected')({
 })
 
 function RouteComponent() {
-  const navigate = Route.useNavigate()
+  const queryClient = useQueryClient()
+  const router = useRouter()
   const handleSignOut = () => {
     signOut({
       fetchOptions: {
         onSuccess: () => {
-          navigate({ to: '/login' })
+          queryClient.removeQueries({ queryKey: ['user'] })
+          router.navigate({ to: '/login' })
         },
       },
     })
