@@ -19,16 +19,22 @@ Go to the project directory
   cd food-bank
 ```
 
-Set up database
-
-```bash
-  docker-compose up -d
-```
-
 Install dependencies
 
 ```bash
   pnpm install
+```
+
+Create the Database tables
+
+```bash
+  pnpm db:migrate
+```
+
+Set the postgres container up
+
+```bash
+  docker-compose up -d
 ```
 
 Start the server
