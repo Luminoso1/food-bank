@@ -23,7 +23,7 @@ const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getIte
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ context }) => {
-    const user = context.queryClient.ensureQueryData(getCurrentUser())
+    const user = await context.queryClient.ensureQueryData(getCurrentUser())
     return { user }
   },
   head: () => ({
