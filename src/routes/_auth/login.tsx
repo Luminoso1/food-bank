@@ -68,7 +68,7 @@ function RouteComponent() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-black hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 px-8 py-4 text-xs font-bold uppercase tracking-widest transition-all shadow-2xl active:scale-95"
+          className="text-white w-full bg-black hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 px-8 py-4 text-xs font-bold uppercase tracking-widest transition-all shadow-2xl active:scale-95"
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>

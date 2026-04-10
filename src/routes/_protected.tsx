@@ -42,7 +42,7 @@ function RouteComponent() {
 
           <button
             onClick={handleSignOut}
-            className="bg-black hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 px-8 py-3 text-xs font-bold uppercase tracking-widest transition-all shadow-2xl active:scale-95"
+            className="text-white bg-black hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 px-8 py-3 text-xs font-bold uppercase tracking-widest transition-all shadow-2xl active:scale-95"
           >
             Sign Out
           </button>
