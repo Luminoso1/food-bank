@@ -1,13 +1,16 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { getRecipients } from '#/lib/recipients/fn'
 
 export const Route = createFileRoute('/_protected/dashboard')({
   component: RouteComponent,
+  loader: async () => {
+    const recipients = await getRecipients()
+    return { recipients }
+  },
+  staleTime: 1000 * 60 * 5,
+  preloadStaleTime: 1000 * 60 * 5,
 })
 
 function RouteComponent() {
-  return (
-    <div>
-      <h1 className="font-semibold text-lg mb-4">hello /dashboard</h1>
-    </div>
-  )
+  return <Outlet />
 }

@@ -25,7 +25,7 @@ function RouteComponent() {
       setError(result.error.message || 'Invalid email or password')
       setLoading(false)
     } else {
-      window.location.href = '/dashboard'
+      window.location.href = '/dashboard/recipients'
     }
   }
 

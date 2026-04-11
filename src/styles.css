@@ -1,8 +1,10 @@
 @import 'tailwindcss';
+@import "tw-animate-css";
+@import '@fontsource/geist';
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -28,4 +30,5 @@ body,
 
 body {
   margin: 0;
+  font-family: var(--font-sans);
 }

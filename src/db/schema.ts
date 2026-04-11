@@ -76,6 +76,26 @@ export const verification = pgTable(
   (table) => [index('verification_identifier_idx').on(table.identifier)],
 )
 
+export const recipients = pgTable('recipients', {
+  id: text('id').primaryKey(),
+  names: text('names').notNull(),
+  lastNames: text('lastNames').notNull(),
+  dni: text('dni').notNull().unique(),
+  email: text('email'),
+  address: text('address'),
+  isActive: boolean('is_active').default(true).notNull(),
+  notes: text('notes'),
+  primaryPhoneNumber: text('primary_phone_number'),
+  secondaryPhoneNumber: text('secondary_phone_number'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+})
+
+export type Recipient = typeof recipients.$inferSelect
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),

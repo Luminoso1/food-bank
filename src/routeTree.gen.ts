@@ -13,10 +13,11 @@ import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
-import { Route as ProtectedConfigRouteImport } from './routes/_protected/config'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ProtectedDashboardRecipientsRouteImport } from './routes/_protected/dashboard.recipients'
+import { Route as ProtectedDashboardCampaignsRouteImport } from './routes/_protected/dashboard.campaigns'
 
 const ProtectedRoute = ProtectedRouteImport.update({
   id: '/_protected',
@@ -36,11 +37,6 @@ const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const ProtectedConfigRoute = ProtectedConfigRouteImport.update({
-  id: '/config',
-  path: '/config',
-  getParentRoute: () => ProtectedRoute,
-} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -56,21 +52,35 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProtectedDashboardRecipientsRoute =
+  ProtectedDashboardRecipientsRouteImport.update({
+    id: '/recipients',
+    path: '/recipients',
+    getParentRoute: () => ProtectedDashboardRoute,
+  } as any)
+const ProtectedDashboardCampaignsRoute =
+  ProtectedDashboardCampaignsRouteImport.update({
+    id: '/campaigns',
+    path: '/campaigns',
+    getParentRoute: () => ProtectedDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/config': typeof ProtectedConfigRoute
-  '/dashboard': typeof ProtectedDashboardRoute
+  '/dashboard': typeof ProtectedDashboardRouteWithChildren
+  '/dashboard/campaigns': typeof ProtectedDashboardCampaignsRoute
+  '/dashboard/recipients': typeof ProtectedDashboardRecipientsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/config': typeof ProtectedConfigRoute
-  '/dashboard': typeof ProtectedDashboardRoute
+  '/dashboard': typeof ProtectedDashboardRouteWithChildren
+  '/dashboard/campaigns': typeof ProtectedDashboardCampaignsRoute
+  '/dashboard/recipients': typeof ProtectedDashboardRecipientsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -80,8 +90,9 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
-  '/_protected/config': typeof ProtectedConfigRoute
-  '/_protected/dashboard': typeof ProtectedDashboardRoute
+  '/_protected/dashboard': typeof ProtectedDashboardRouteWithChildren
+  '/_protected/dashboard/campaigns': typeof ProtectedDashboardCampaignsRoute
+  '/_protected/dashboard/recipients': typeof ProtectedDashboardRecipientsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
@@ -90,11 +101,19 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/register'
-    | '/config'
     | '/dashboard'
+    | '/dashboard/campaigns'
+    | '/dashboard/recipients'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/config' | '/dashboard' | '/api/auth/$'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/dashboard'
+    | '/dashboard/campaigns'
+    | '/dashboard/recipients'
+    | '/api/auth/$'
   id:
     | '__root__'
     | '/'
@@ -102,8 +121,9 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/_auth/login'
     | '/_auth/register'
-    | '/_protected/config'
     | '/_protected/dashboard'
+    | '/_protected/dashboard/campaigns'
+    | '/_protected/dashboard/recipients'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
@@ -144,13 +164,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedDashboardRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/config': {
-      id: '/_protected/config'
-      path: '/config'
-      fullPath: '/config'
-      preLoaderRoute: typeof ProtectedConfigRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
     '/_auth/register': {
       id: '/_auth/register'
       path: '/register'
@@ -172,6 +185,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_protected/dashboard/recipients': {
+      id: '/_protected/dashboard/recipients'
+      path: '/recipients'
+      fullPath: '/dashboard/recipients'
+      preLoaderRoute: typeof ProtectedDashboardRecipientsRouteImport
+      parentRoute: typeof ProtectedDashboardRoute
+    }
+    '/_protected/dashboard/campaigns': {
+      id: '/_protected/dashboard/campaigns'
+      path: '/campaigns'
+      fullPath: '/dashboard/campaigns'
+      preLoaderRoute: typeof ProtectedDashboardCampaignsRouteImport
+      parentRoute: typeof ProtectedDashboardRoute
+    }
   }
 }
 
@@ -187,14 +214,25 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface ProtectedDashboardRouteChildren {
+  ProtectedDashboardCampaignsRoute: typeof ProtectedDashboardCampaignsRoute
+  ProtectedDashboardRecipientsRoute: typeof ProtectedDashboardRecipientsRoute
+}
+
+const ProtectedDashboardRouteChildren: ProtectedDashboardRouteChildren = {
+  ProtectedDashboardCampaignsRoute: ProtectedDashboardCampaignsRoute,
+  ProtectedDashboardRecipientsRoute: ProtectedDashboardRecipientsRoute,
+}
+
+const ProtectedDashboardRouteWithChildren =
+  ProtectedDashboardRoute._addFileChildren(ProtectedDashboardRouteChildren)
+
 interface ProtectedRouteChildren {
-  ProtectedConfigRoute: typeof ProtectedConfigRoute
-  ProtectedDashboardRoute: typeof ProtectedDashboardRoute
+  ProtectedDashboardRoute: typeof ProtectedDashboardRouteWithChildren
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedConfigRoute: ProtectedConfigRoute,
-  ProtectedDashboardRoute: ProtectedDashboardRoute,
+  ProtectedDashboardRoute: ProtectedDashboardRouteWithChildren,
 }
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
