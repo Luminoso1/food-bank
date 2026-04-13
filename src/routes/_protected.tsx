@@ -36,7 +36,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4">
       <header>
         <div className="py-4 flex items-center justify-between">
           <menu className="flex items-center gap-4 py-6">
