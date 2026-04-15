@@ -25,16 +25,30 @@ Install dependencies
   pnpm install
 ```
 
-Create the Database tables
+Create a `.env.local` file in the root of the project:
 
-```bash
-  pnpm db:migrate
+```env
+# Database URL for PostgreSQL
+DATABASE_URL="postgresql://postgres:example@localhost:5432/database_name"
+
+# Better Auth
+BETTER_AUTH_SECRET=thisisasecret
+BETTER_AUTH_URL=http://localhost:3000
+
+# OpenAI
+OPENAI_API_KEY=
 ```
 
 Set the postgres container up
 
 ```bash
   docker-compose up -d
+```
+
+Create the Database tables
+
+```bash
+  pnpm db:migrate
 ```
 
 Start the server
@@ -52,6 +66,7 @@ Start the server
 - [Drizzle](https://orm.drizzle.team/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Better Auth](https://better-auth.com/)
+- [OpenAi](https://developers.openai.com/api/reference/typescript)
 
 ## Authors
 

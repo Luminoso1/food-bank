@@ -4,6 +4,45 @@ import { db } from '#/db'
 import { recipients } from '#/db/schema'
 import { auth } from '#/lib/auth'
 import { recipientSchema } from '#/lib/recipients/schema'
+import OpenAI from 'openai'
+import { env } from '#/env/server'
+import type { RecipientRow } from './schema'
+
+const client = new OpenAI({
+  apiKey: env.OPENAI_API_KEY,
+})
+
+export const PROMPT = `
+Return ONLY ONE JSON object.
+
+NO arrays.
+NO extra keys.
+NO explanations.
+NO markdown.
+
+If multiple people exist, return ONLY the first one.
+
+Format:
+{
+  "lastNames": "",
+  "names": "",
+  "dni": "",
+  "address": "",
+  "primaryPhoneNumber": "",
+  "secondaryPhoneNumber": "",
+  "email": "",
+  "notes": "",
+  "id": null,
+  "isActive": true
+}
+
+Rules:
+- ALL values are strings except isActive (boolean) and id (null)
+- Use "" if missing
+- Uppercase lastNames and names
+- digits only for dni and phones
+- remove symbols/spaces from numbers
+`
 
 export const ensureAuthFn = createMiddleware({ type: 'function' }).server(
   async ({ next }) => {
@@ -39,4 +78,42 @@ export const getRecipientsFn = createServerFn({ method: 'GET' })
   .handler(async ({}) => {
     const result = await db.select().from(recipients)
     return result
+  })
+
+export const extractImageDataFn = createServerFn({ method: 'POST' })
+  .middleware([ensureAuthFn])
+  .inputValidator((data: FormData) => {
+    const file = data.get('image')
+    if (!(file instanceof File)) throw new Error('Invalid file')
+    return { file }
+  })
+  .handler(async ({ data }) => {
+    const bytes = await data.file.arrayBuffer()
+    const base64Image = Buffer.from(bytes).toString('base64')
+
+    const response = await client.chat.completions.create({
+      model: 'gpt-4o-mini',
+      response_format: { type: 'json_object' },
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: PROMPT,
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`,
+              },
+            },
+          ],
+        },
+      ],
+    })
+
+    const result = response.choices[0].message.content
+
+    return JSON.parse(result || '{}') as RecipientRow
   })

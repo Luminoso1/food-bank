@@ -30,7 +30,13 @@ export const recipientSchema = createInsertSchema(recipients, {
       .min(10, '10 numbers min')
       .or(z.literal(''))
       .nullable(),
+
+  address: (schema) => schema.nullable(),
+
+  notes: (schema) => schema.nullable(),
 }).omit({
   createdAt: true,
   updatedAt: true,
 })
+
+export type RecipientRow = z.infer<typeof recipientSchema>
