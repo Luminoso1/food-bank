@@ -1,61 +1,11 @@
-import { createServerFn, createMiddleware } from '@tanstack/react-start'
-import { getRequestHeaders } from '@tanstack/react-start/server'
+import { createServerFn } from '@tanstack/react-start'
 import { db } from '#/db'
 import { recipients } from '#/db/schema'
-import { auth } from '#/lib/auth'
 import { recipientSchema } from '#/lib/recipients/schema'
-import OpenAI from 'openai'
-import { env } from '#/env/server'
 import type { RecipientRow } from './schema'
-
-const client = new OpenAI({
-  apiKey: env.OPENAI_API_KEY,
-})
-
-export const PROMPT = `
-Return ONLY ONE JSON object.
-
-NO arrays.
-NO extra keys.
-NO explanations.
-NO markdown.
-
-If multiple people exist, return ONLY the first one.
-
-Format:
-{
-  "lastNames": "",
-  "names": "",
-  "dni": "",
-  "address": "",
-  "primaryPhoneNumber": "",
-  "secondaryPhoneNumber": "",
-  "email": "",
-  "notes": "",
-  "id": null,
-  "isActive": true
-}
-
-Rules:
-- ALL values are strings except isActive (boolean) and id (null)
-- Use "" if missing
-- Uppercase lastNames and names
-- digits only for dni and phones
-- remove symbols/spaces from numbers
-`
-
-export const ensureAuthFn = createMiddleware({ type: 'function' }).server(
-  async ({ next }) => {
-    const headers = getRequestHeaders()
-    const session = await auth.api.getSession({ headers })
-
-    if (!session) {
-      throw new Error('Unauthorized')
-    }
-
-    return next()
-  },
-)
+import { ensureAuthFn } from '#/lib/auth/fn'
+import { PROMPT } from '#/lib/helpers/constants'
+import { openAiClient } from '#/lib/ai/openai'
 
 export const insertRecipientFn = createServerFn({ method: 'POST' })
   .middleware([ensureAuthFn])
@@ -91,7 +41,7 @@ export const extractImageDataFn = createServerFn({ method: 'POST' })
     const bytes = await data.file.arrayBuffer()
     const base64Image = Buffer.from(bytes).toString('base64')
 
-    const response = await client.chat.completions.create({
+    const response = await openAiClient.chat.completions.create({
       model: 'gpt-4o-mini',
       response_format: { type: 'json_object' },
       messages: [
