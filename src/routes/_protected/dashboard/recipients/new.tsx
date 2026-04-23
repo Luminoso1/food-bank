@@ -73,7 +73,7 @@ function RouteComponent() {
         )
       })
       router.invalidate({
-        filter: (d) => d.routeId !== '/_protected/dashboard/recipients/',
+        filter: (d) => d.routeId === '/_protected/dashboard/recipients/',
       })
       router.navigate({ to: '..' })
     } catch (err: any) {
