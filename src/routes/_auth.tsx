@@ -15,7 +15,10 @@ function RouteComponent() {
     <div className="w-full grid md:grid-cols-12 min-h-screen">
       <div className="md:col-span-6 w-full px-6 flex flex-col">
         <header className="py-6">
-          <Link to="/" className="font-semibold flex items-end gap-2 text-black dark:text-white">
+          <Link
+            to="/"
+            className="font-semibold flex items-end gap-2 text-black dark:text-white"
+          >
             <Blocks />
             Food Bank
           </Link>

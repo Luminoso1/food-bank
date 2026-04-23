@@ -25,7 +25,7 @@ export const insertRecipientFn = createServerFn({ method: 'POST' })
 
 export const getRecipientsFn = createServerFn({ method: 'GET' })
   .middleware([ensureAuthFn])
-  .handler(async ({}) => {
+  .handler(async () => {
     const result = await db.select().from(recipients)
     return result
   })
