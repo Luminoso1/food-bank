@@ -1,20 +1,63 @@
+import { useSearch, useNavigate } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { SmilePlus } from 'lucide-react'
 import type { Recipient } from '#/db/schema'
 import Table from './Table'
 import Badge from './Badge'
+import Pagination from './Pagination'
 
 interface Props {
   data: Recipient[]
 }
 
 function Recipients({ data }: Props) {
+  const { data: recipients, startIndex, ...rest } = usePagination(data)
   return (
     <>
       <Header />
-      <Data data={data} />
+      <Data data={recipients} startIndex={startIndex} />
+      <Pagination {...rest} />
     </>
   )
+}
+
+const usePagination = (data: Array<any>) => {
+  const { page, size } = useSearch({
+    from: '/_protected/dashboard/recipients/',
+  })
+
+  const navigate = useNavigate({ from: '/dashboard/recipients/' })
+
+  const totalPages = Math.ceil(data.length / size)
+  const hasPrevPage = page > 1
+  const hasNextPage = page < totalPages
+
+  const setPage = (page: number) => {
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: Math.min(Math.max(1, page), totalPages),
+      }),
+    })
+  }
+  const setSize = (size: number) => {
+    navigate({
+      search: (prev) => ({ ...prev, size, page: 1 }),
+    })
+  }
+
+  return {
+    data: data.slice((page - 1) * size, page * size),
+    startIndex: (page - 1) * size,
+    hasPrevPage,
+    hasNextPage,
+    page,
+    pages: totalPages,
+    rows: data.length,
+    size,
+    setPage,
+    setSize,
+  }
 }
 
 const Header = () => {
@@ -49,13 +92,16 @@ const TABLE_HEADERS = [
   'Phone',
 ] as const
 
-const Data = ({ data }: Props) => {
+const Data = ({ data, startIndex }: Props & { startIndex: number }) => {
   return (
     <Table>
       <Table.Head>
         <Table.Row className="border-b border-black/10 dark:border-white/10">
           {TABLE_HEADERS.map((value) => (
-            <Table.HCell className="text-gray-500 dark:text-gray-400">
+            <Table.HCell
+              key={value}
+              className="text-gray-500 dark:text-gray-400"
+            >
               {value}
             </Table.HCell>
           ))}
@@ -73,7 +119,7 @@ const Data = ({ data }: Props) => {
               className="group hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
             >
               <Table.Cell className="text-gray-400">
-                {(index + 1).toString().padStart(2, '0')}
+                {(startIndex + (index + 1)).toString().padStart(2, '0')}
               </Table.Cell>
 
               <Table.Cell className="text-gray-600 dark:text-white/80">
